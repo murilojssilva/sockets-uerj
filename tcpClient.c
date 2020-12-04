@@ -79,7 +79,6 @@ int main(int argc, char * argv[])
 
         while (msg.code < 2) {
            printf ("Client: connection established with server\n");
-           printf ("hello from client\n");
            printf ("Codigo = ");
            msg.code = atoi (fgets(buf, sizeof(buf), stdin));
            printf ("Mensagem = ");

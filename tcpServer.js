@@ -68,23 +68,17 @@ socket.on('data',function(data){
   
   //echo data
   if (typeof data === 'number'){
-    var is_kernel_buffer_full = socket.write('Data ::' + (data + 1));
+    var is_kernel_buffer_full = socket.write(data + 1);
   }
   else{
     if (data.length === 1){
-      var is_kernel_buffer_full = socket.write('Data ::' + data);
+      var is_kernel_buffer_full = socket.write(data);
     }
     else{
-      var is_kernel_buffer_full = socket.write('Data ::' + data.split('').reverse().join(''));
+      var is_kernel_buffer_full = socket.write(data.split('').reverse().join(''));
     }
   }
-  
-  /*
-  if(is_kernel_buffer_full){
-    console.log('Data was flushed successfully from kernel buffer i.e written successfully!');
-  }else{
-    socket.pause();
-  }*/
+
   
 });
 
