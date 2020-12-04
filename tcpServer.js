@@ -65,16 +65,35 @@ socket.on('data',function(data){
   console.log('Bytes read : ' + bread);
   console.log('Bytes written : ' + bwrite);
   console.log('Data sent to server : ' + data);
-
+  
   //echo data
-  var is_kernel_buffer_full = socket.write('Data ::' + data);
+  if (typeof data === 'number'){
+    var is_kernel_buffer_full = socket.write('Data ::' + (data + 1));
+  }
+  else{
+    if (data.length === 1){
+      var is_kernel_buffer_full = socket.write('Data ::' + data);
+    }
+    else{
+      var is_kernel_buffer_full = socket.write('Data ::' + data.split('').reverse().join(''));
+    }
+  }
+  
+  /*
   if(is_kernel_buffer_full){
     console.log('Data was flushed successfully from kernel buffer i.e written successfully!');
   }else{
     socket.pause();
-  }
-
+  }*/
+  
 });
+
+
+socket.on('uncaughtException', function (err) {
+  console.error(err.stack);
+  console.log("Node NOT Exiting...");
+});
+
 
 socket.on('drain',function(){
   console.log('write buffer is empty now .. u can resume the writable stream');
