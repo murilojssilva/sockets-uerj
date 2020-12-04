@@ -9,7 +9,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#define PROTOPORT       6000            /* default protocol port number */
+#define SIZE 10
+
+#define PROTOPORT       9925            /* default protocol port number */
 
 extern  int             errno;
 char    localhost[] =   "localhost";    /* default host name            */
@@ -106,6 +108,8 @@ int main(int argc, char * argv[])
         /* Repeatedly read data from user and send it to server. */
 
         while (msg.code < 2) {
+           printf ("Client: connection established with server\n");
+           printf ("hello from client\n");
            printf ("Codigo = ");
            msg.code = atoi (fgets(buf, sizeof(buf), stdin));
            printf ("Mensagem = ");
