@@ -1,46 +1,52 @@
-var net = require('net');
+let net = require('net');
 
-var server = net.createServer(function(c) { //'connection' listener
+let server = net.createServer(function(c) { //'connection' listener
   console.log('Cliente conectado.');
   c.on('end', function() {
     console.log('Cliente disconectado.');
   });
-  c.on("data", function(buffer){
-    const data = buffer.toString();
-    const dataList = data.split("=");
-    console.log(data);
-    console.log(dataList);
-    console.log(dataList.length);
-      const option = dataList[0];
-      const msg = { data: dataList[1]}
-      switch (option) {
-          case '1':
-              number = +msg.data;
-              c.write(number + 1, "utf-8");
-              break;
-          case '2':
-              var char = msg.data.toString();
-              c.write(char.toUpperCase(), "utf-8");
-              break;
-          case '3':
-              const sentence = msg.data.toString()
-              c.write(sentence.split('').reverse().join(''),"utf-8");
-              break;
-          default:
-              c.write("Comando inválido.", "utf-8");
-              break;
+  c.on('data', function(buffer){
+    if (buffer[0] === 1){
+      let number = buffer.toString();
+      if (Number.isNaN(number)) {
+          c.write('Na opção 1 é necessário enviar um inteiro na msg', "utf-8");
       }
+      else {
+          c.write(number);
+          console.log(number);
+      }
+    }
+    else if (buffer[0] === 2){
+      let char = buffer.toString();
+
+      if (char.length !== 1) {
+        c.write('Na opção 2 é necessário enviar apenas um caracter', 'utf-8');
+      }
+      else {
+          var asciiNumber = char.charCodeAt();
+          if (asciiNumber === char.toLowerCase().charCodeAt()) {
+              c.write(char.toLowerCase, "utf-8");
+          }
+          else {
+              c.write(char.toUpperCase, "utf-8");
+          }
+      }
+      
+    }
+    else if (buffer[0] === 3){
+      const sentence = buffer.toString();
+      const invertedSentence = sentence.split('').reverse().join('');
+      c.write(invertedSentence);
+      console.log(invertedSentence);
+      //c.write(data.toString().split("").reverse().join(""));
+      //console.log(buffer.toString().split("").reverse().join(""));
+    }
+    else{
+      console.log("Erro");
+    }
+  })
   
-    
-    
-  })
-  c.on("message", function(buffer,rinfo){
-    const data = buffer.toString();
-    const dataList = data.split("=");
-    console.log(data);
-    console.log(dataList);
-  })
-  c.on("error", function(err){
+  c.on('error', function(err){
     console.log(err);
   })
 });
