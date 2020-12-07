@@ -1,5 +1,4 @@
 var net = require('net');
-var handlers = require('./handlers')
 
 var server = net.createServer(function(c) { //'connection' listener
   console.log('Cliente conectado.');
