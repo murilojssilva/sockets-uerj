@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <string.h>
 
-setlocale (LC_ALL, "");
+#define LC_ALL __LC_ALL
 
 #define PROTOPORT       9925            
 
