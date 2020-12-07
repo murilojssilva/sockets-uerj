@@ -1,18 +1,18 @@
 let net = require('net');
 
-let server = net.createServer(function(c) { //'connection' listener
+const server = net.createServer(socket => {
   console.log('Cliente conectado.');
-  c.on('end', function() {
+  socket.on('end', function() {
     console.log('Cliente disconectado.');
   });
-  c.on('data', function(buffer){
+  socket.on('data', function(buffer){
     if (buffer[0] === 1){
       let number = buffer.toString();
       if (Number.isNaN(number)) {
-          c.write('Na opção 1 é necessário enviar um inteiro na msg', "utf-8");
+          socket.write('Na opção 1 é necessário enviar um inteiro na msg', "utf-8");
       }
       else {
-          c.write(number);
+          socket.write(number);
           console.log(number);
       }
     }
@@ -20,33 +20,31 @@ let server = net.createServer(function(c) { //'connection' listener
       let char = buffer.toString();
 
       if (char.length !== 1) {
-        c.write('Na opção 2 é necessário enviar apenas um caracter', 'utf-8');
+        socket.write('Na opção 2 é necessário enviar apenas um caracter', 'utf-8');
       }
       else {
           var asciiNumber = char.charCodeAt();
           if (asciiNumber === char.toLowerCase().charCodeAt()) {
-              c.write(char.toLowerCase, "utf-8");
+              socket.write(char.toLowerCase, "utf-8");
           }
           else {
-              c.write(char.toUpperCase, "utf-8");
+              socket.write(char.toUpperCase, "utf-8");
           }
       }
       
     }
     else if (buffer[0] === 3){
-      const sentence = buffer.toString();
-      const invertedSentence = sentence.split('').reverse().join('');
-      c.write(invertedSentence);
-      console.log(invertedSentence);
-      //c.write(data.toString().split("").reverse().join(""));
-      //console.log(buffer.toString().split("").reverse().join(""));
+      let sentence = buffer.toString();
+      let inverted = sentence.split("").reduce((rev, char)=> char + rev, ''); 
+      socket.write(inverted, "utf-8");
+      //socket.write(inverted);
     }
     else{
       console.log("Erro");
     }
   })
   
-  c.on('error', function(err){
+  socket.on('error', function(err){
     console.log(err);
   })
 });
