@@ -1,53 +1,58 @@
-let net = require('net');
 
-const server = net.createServer(socket => {
-  console.log('Cliente conectado.');
-  socket.on('end', function() {
-    console.log('Cliente disconectado.');
-  });
-  socket.on('data', function(buffer){
-    if (buffer[0] === 1){
-      let number = buffer.toString();
-      if (Number.isNaN(number)) {
-          socket.write('Na opção 1 é necessário enviar um inteiro na msg', "utf-8");
-      }
-      else {
-          socket.write(number);
-          console.log(number);
-      }
-    }
-    else if (buffer[0] === 2){
-      let char = buffer.toString();
+net = require('net');
 
-      if (char.length !== 1) {
-        socket.write('Na opção 2 é necessário enviar apenas um caracter', 'utf-8');
-      }
-      else {
-          var asciiNumber = char.charCodeAt();
-          if (asciiNumber === char.toLowerCase().charCodeAt()) {
-              socket.write(char.toLowerCase, "utf-8");
+var PORT = 9925;
+ 
+net.createServer(function (socket) {
+    console.log('Cliente conectado.');
+    socket.on('end', function() {
+        console.log('Cliente disconectado.');
+    });
+    socket.on('data', function(buffer){
+        const number = buffer.toString();
+        if (buffer[0] === 1){
+          if (Number.isNaN(number)) {
+              socket.write('Erro. Esta opção solitica um número inteiro.', "utf16le");
           }
           else {
-              socket.write(char.toUpperCase, "utf-8");
+              socket.write(number + 1);
           }
-      }
-      
-    }
-    else if (buffer[0] === 3){
-      let sentence = buffer.toString();
-      let inverted = sentence.split("").reduce((rev, char)=> char + rev, ''); 
-      socket.write(inverted, "utf-8");
-      //socket.write(inverted);
-    }
-    else{
-      console.log("Erro");
-    }
-  })
-  
-  socket.on('error', function(err){
-    console.log(err);
-  })
+        }
+        else if (buffer[0] === 2){
+          var char = buffer.toString();
+          console.log(char.length);
+          if (char.length !== 1) {
+            socket.write('Esta opção solicita apenas 1 caractere.', 'utf16le');
+          }
+          else {
+              var asciiNumber = char.charCodeAt();
+              if (asciiNumber === char.toLowerCase().charCodeAt()) {
+                  socket.write(char.toLowerCase(), "utf16le");
+                  console.log(char.toLowerCase());
+              }
+              else {
+                  socket.write(char.toUpperCase, "utf16le");
+                  console.log(char.toUpperCase());
+              }
+          }
+        }
+        else if (buffer[0] === 3){
+          let sentence = buffer.toString();
+          let inverted = sentence.split("").reverse().join("");
+          inverted = inverted.charCodeAt(0);
+          socket.write(inverted.toString(), "utf16le");
+          //socket.write(inverted);
+        }
+        else{
+          console.log("Opção inválida.");
+        }
+      })
+    socket.on('error', function(err){
+        console.log(err);
+    })
+    
+}).listen(PORT, function() {
+    console.log('Servidor online');
 });
-server.listen(9925, function() { //'listening' listener
-  console.log('Servidor online');
-});
+
+

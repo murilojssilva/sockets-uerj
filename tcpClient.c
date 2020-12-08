@@ -10,7 +10,18 @@
 #include <stdio.h>
 #include <string.h>
 
-#define LC_ALL __LC_ALL
+#include <limits.h>
+#include <wchar.h>
+
+#if (WCHAR_MAX==65535) && WCHAR_MIN==0
+typedef wchar_t char_UTF16LE;
+#elif USHRT_MAX==65535
+typedef unsigned short char_UTF16LE;
+#elif UINT_MAX==65535
+typedef unsigned char_UTF16LE;
+#else
+#    error "Cannot find 16-bit type"
+#endif
 
 #define PROTOPORT       9925            
 
